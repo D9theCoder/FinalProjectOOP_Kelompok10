@@ -134,7 +134,7 @@ public class Main {
     }
 
     private static void filterReservationsByStatus() {
-        System.out.println("Enter a status to filter reservations (e.g., 'In Order'):");
+        System.out.println("Enter a status to filter reservations (misal: 'In Order'):");
         String filterStatus = scanner.nextLine();
 
         List<Reservation> reservationsByStatus = reservationDAO.getReservationsByStatus(filterStatus);
@@ -142,7 +142,7 @@ public class Main {
     }
 
     private static void filterReservationsByCustomerName() {
-        System.out.println("Enter a customer name to filter reservations (misal: Putu):");
+        System.out.println("Enter a customer name to filter reservations (misal: Andi):");
         String filterCustomerName = scanner.nextLine();
 
         List<Reservation> reservationsByCustomer = reservationDAO.getReservationsByCustomerName(filterCustomerName);
