@@ -1,5 +1,6 @@
 package DataAccessObject;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -68,11 +69,11 @@ public class TransactionDAO {
                     int reservationId = resultSet.getInt("ReservationID");
                     int menuId = resultSet.getInt("MenuID");
 
-                    // Assuming you have methods to get Reservation and Menu by their IDs
                     Reservation reservation = new ReservationDAO().getReservationById(reservationId);
                     Menu menu = new MenuDAO().getMenuById(menuId);
 
                     transaction = new Transaction(id, reservation, menu);
+                    
                 }
             }
         } catch (SQLException e) {

@@ -68,7 +68,6 @@ public class MenuDAO {
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 preparedStatement.setString(1, employee.getName());
 
-                // Check if the employee has a branch assigned
                 if (employee.getRestaurantBranch() != null) {
                     preparedStatement.setInt(2, employee.getRestaurantBranch().getId());
                 } else {
@@ -77,7 +76,6 @@ public class MenuDAO {
 
                 preparedStatement.executeUpdate();
 
-                // Retrieve the auto-generated employee ID
                 ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
                 if (generatedKeys.next()) {
                     int employeeId = generatedKeys.getInt(1);

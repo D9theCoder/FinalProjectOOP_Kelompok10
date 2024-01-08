@@ -18,7 +18,6 @@ public class ReservationDAO {
 
                 preparedStatement.executeUpdate();
 
-                // Get the generated reservation ID
                 try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
                         int reservationId = generatedKeys.getInt(1);

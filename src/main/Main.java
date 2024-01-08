@@ -156,13 +156,10 @@ public class Main {
 
         System.out.println("Enter branch ID to assign the employee:");
         int branchId = scanner.nextInt();
-        scanner.nextLine(); // Consume the newline character
+        scanner.nextLine(); 
 
-        // Assign the selected branch to the employee
         Branch selectedBranch = new Branch(branchId, "Branch Location");
         employee.setRestaurantBranch(selectedBranch);
-
-        // Insert the employee into the database
         employeeDAO.insertEmployee(employee);
 
         System.out.println("Employee registered and assigned successfully!");
