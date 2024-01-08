@@ -28,7 +28,8 @@ public class Main {
             System.out.println("4. Filter Reservations by Status");
             System.out.println("5. Filter Reservations by Customer Name");
             System.out.println("6. Register Employee");
-            System.out.println("7. Exit");
+            System.out.println("7. View Transaction");
+            System.out.println("8. Exit");
 
             int choice = scanner.nextInt();
             scanner.nextLine();
@@ -53,8 +54,11 @@ public class Main {
                     registerAndAssignEmployee();
                     break;
                 case 7:
+                    viewTransaction();
+                case 8:
                     System.out.println("Exiting the program. Goodbye!");
                     System.exit(0);
+
                 default:
                     System.out.println("Invalid choice. Please enter a valid option.");
             }
@@ -63,35 +67,35 @@ public class Main {
 
     private static void makeReservation() {
         Scanner scanner = new Scanner(System.in);
-    
+
         System.out.println("Enter customer name:");
         String customerName = scanner.nextLine();
-    
+
         System.out.println("Enter table ID:");
         int tableId = scanner.nextInt();
         scanner.nextLine();
-    
+
         System.out.println("Enter employee ID:");
         int employeeId = scanner.nextInt();
         scanner.nextLine();
-    
+
         System.out.println("Enter number of customers:");
         int numberOfCustomers = scanner.nextInt();
         scanner.nextLine();
-    
+
         // Membuat objek ReservationDAO
         ReservationDAO reservationDAO = new ReservationDAO();
-    
+
         // Membuat objek Reservation
         // ID akan dihasilkan oleh database
-        Reservation reservation = new Reservation(0, tableId, employeeId, customerName, "In Reserve", numberOfCustomers);
-    
+        Reservation reservation = new Reservation(0, tableId, employeeId, customerName, "In Reserve",
+                numberOfCustomers);
+
         // Membuat reservasi menggunakan DAO
         reservationDAO.createReservation(reservation);
-    
+
         System.out.println("Reservation created successfully!");
     }
-    
 
     private static void updateReservationStatus() {
         System.out.println("Enter reservation ID:");
@@ -162,5 +166,28 @@ public class Main {
         employeeDAO.insertEmployee(employee);
 
         System.out.println("Employee registered and assigned successfully!");
+    }
+
+    public static void viewTransaction() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Enter transaction ID:");
+        int transactionId = scanner.nextInt();
+        scanner.nextLine();
+
+        // Membuat objek TransactionDAO
+        TransactionDAO transactionDAO = new TransactionDAO();
+
+        // Mendapatkan transaksi menggunakan DAO
+        Transaction transaction = transactionDAO.viewTransaction(transactionId);
+
+        if (transaction != null) {
+            System.out.println("Transaction details:");
+            System.out.println("ID: " + transaction.getId());
+            System.out.println("Reservation ID: " + transaction.getReservation().getId());
+            System.out.println("Menu ID: " + transaction.getMenu().getId());
+        } else {
+            System.out.println("No transaction found with the given ID.");
+        }
     }
 }

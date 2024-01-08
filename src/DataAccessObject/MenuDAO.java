@@ -34,7 +34,7 @@ public class MenuDAO {
         return menuItems;
     }
 
-    public Menu getMenuById(int menuId) {
+    public static Menu getMenuById(int menuId) {
         Menu menuItem = null;
 
         try (Connection connection = DatabaseConnection.getConnection()) {
