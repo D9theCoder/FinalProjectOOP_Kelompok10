@@ -5,14 +5,12 @@ public class Employee {
     private String name;
     private Branch restaurantBranch;
 
-    // Constructors
     public Employee(int id, String name, Branch restaurantBranch) {
         this.id = id;
         this.name = name;
         this.restaurantBranch = restaurantBranch;
     }
 
-    // Getter methods
     public int getId() {
         return id;
     }
@@ -25,7 +23,6 @@ public class Employee {
         return restaurantBranch;
     }
 
-    // Setter methods
     public void setId(int id) {
         this.id = id;
     }

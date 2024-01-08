@@ -9,17 +9,17 @@ public class Reservation {
     private RestaurantTable table;
     private Employee employee;
     private String status;
+    private int numberOfCustomers;
 
-    // Constructors, getters, and setters
-        public Reservation(int id, String customerName, RestaurantTable table, Employee employee, String status) {
+    public Reservation(int id, String customerName, RestaurantTable table, Employee employee, String status,int numberOfCustomers) {
         this.id = id;
         this.customerName = customerName;
         this.table = table;
         this.employee = employee;
         this.status = status;
+        this.numberOfCustomers = numberOfCustomers;
     }
 
-    // Getter methods
     public int getId() {
         return id;
     }
@@ -38,6 +38,10 @@ public class Reservation {
 
     public String getStatus() {
         return status;
+    }
+
+    public int getNumberOfCustomers() {
+        return numberOfCustomers;
     }
 
     // Setter methods
@@ -61,15 +65,19 @@ public class Reservation {
         this.status = status;
     }
 
+    public void setNumberOfCustomers(int numberOfCustomers) {
+        this.numberOfCustomers = numberOfCustomers;
+    }
+
     public void createReservation(Reservation reservation) {
         try (Connection connection = DatabaseConnection.getConnection()) {
-            String sql = "INSERT INTO Reservation (CustomerName, TableID, EmployeeID, Status) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO Reservation (TableID, EmployeeID, CustomerName, Status, NumberOfCustomers) VALUES (?, ?, ?, ?, ?)";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-                preparedStatement.setString(1, reservation.getCustomerName());
-                preparedStatement.setInt(2, reservation.getTable().getId());
-                preparedStatement.setInt(3, reservation.getEmployee().getId());
+                preparedStatement.setInt(1, reservation.getTable().getId());
+                preparedStatement.setInt(2, reservation.getEmployee().getId());
+                preparedStatement.setString(3, reservation.getCustomerName());
                 preparedStatement.setString(4, "In Reserve"); // Initial status
-
+                preparedStatement.setInt(5, reservation.getNumberOfCustomers());
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
@@ -91,5 +99,4 @@ public class Reservation {
         }
     }
 
-   
 }

@@ -49,6 +49,4 @@ public class TransactionDAO {
             e.printStackTrace();
         }
     }
-
-    // Metode lain sesuai kebutuhan
 }

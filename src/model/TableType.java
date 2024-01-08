@@ -5,14 +5,12 @@ public class TableType {
     private String type;
     private int maxCapacity;
 
-    // Constructors
     public TableType(int id, String type, int maxCapacity) {
         this.id = id;
         this.type = type;
         this.maxCapacity = maxCapacity;
     }
 
-    // Getter methods
     public int getId() {
         return id;
     }
@@ -25,7 +23,6 @@ public class TableType {
         return maxCapacity;
     }
 
-    // Setter methods
     public void setId(int id) {
         this.id = id;
     }

@@ -5,18 +5,18 @@ public class Menu {
     private String menuName;
     private String menuType;
     private double menuPrice;
-    private String originDescription;
+    private String origin;
+    private String menuDescription;
 
-    // Constructors
-    public Menu(int id, String menuName, String menuType, double menuPrice, String originDescription) {
+    public Menu(int id, String menuName, String menuType, double menuPrice, String origin, String menuDescription) {
         this.id = id;
         this.menuName = menuName;
         this.menuType = menuType;
         this.menuPrice = menuPrice;
-        this.originDescription = originDescription;
+        this.origin =  origin;
+        this.menuDescription = menuDescription;
     }
 
-    // Getter methods
     public int getId() {
         return id;
     }
@@ -33,11 +33,14 @@ public class Menu {
         return menuPrice;
     }
 
-    public String getOriginDescription() {
-        return originDescription;
+    public String getOrigin() {
+        return origin;
     }
 
-    // Setter methods
+    public String getDescription() {
+        return menuDescription;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -54,7 +57,11 @@ public class Menu {
         this.menuPrice = menuPrice;
     }
 
-    public void setOriginDescription(String originDescription) {
-        this.originDescription = originDescription;
+    public void setOrigin(String origin) {
+        this.origin = origin;
+    }
+
+      public void setDescription(String menuDescription) {
+        this.menuDescription = menuDescription;
     }
 }

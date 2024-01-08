@@ -5,14 +5,12 @@ public class RestaurantTable {
     private Branch branch;
     private TableType tableType;
 
-    // Constructors
     public RestaurantTable(int id, Branch branch, TableType tableType) {
         this.id = id;
         this.branch = branch;
         this.tableType = tableType;
     }
 
-    // Getter methods
     public int getId() {
         return id;
     }
@@ -25,7 +23,6 @@ public class RestaurantTable {
         return tableType;
     }
 
-    // Setter methods
     public void setId(int id) {
         this.id = id;
     }

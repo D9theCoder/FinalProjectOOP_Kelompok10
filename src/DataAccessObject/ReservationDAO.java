@@ -7,23 +7,33 @@ import model.*;
 public class ReservationDAO {
     public void createReservation(Reservation reservation) {
         try (Connection connection = DatabaseConnection.getConnection()) {
-            String sql = "INSERT INTO Reservation (CustomerName, TableID, EmployeeID, Status) VALUES (?, ?, ?, ?)";
-            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-                preparedStatement.setString(1, reservation.getCustomerName());
-                preparedStatement.setInt(2, reservation.getTable().getId());
-                preparedStatement.setInt(3, reservation.getEmployee().getId());
-                preparedStatement.setString(4, reservation.getStatus());
+            String sql = "INSERT INTO Reservation (TableID, EmployeeID, CustomerName, Status, NumberOfCustomers) VALUES (?, ?, ?, ?, ?)";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                preparedStatement.setInt(1, reservation.getTable().getId());
+                preparedStatement.setInt(2, reservation.getEmployee().getId());
+                preparedStatement.setString(3, reservation.getCustomerName());
+                preparedStatement.setString(4, "In Reserve"); // Initial status
+                preparedStatement.setInt(5, reservation.getNumberOfCustomers());
 
                 preparedStatement.executeUpdate();
+
+                // Get the generated reservation ID
+                try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        int reservationId = generatedKeys.getInt(1);
+                        reservation.setId(reservationId);
+                    }
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+
     public void updateReservationStatus(int reservationId, String newStatus) {
         try (Connection connection = DatabaseConnection.getConnection()) {
-            String sql = "UPDATE Reservation SET Status = ? WHERE ID = ?";
+            String sql = "UPDATE Reservation SET Status = ? WHERE ReservationID = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.setString(1, newStatus);
                 preparedStatement.setInt(2, reservationId);
@@ -73,20 +83,18 @@ public class ReservationDAO {
     }
 
     private Reservation mapResultSetToReservation(ResultSet resultSet) throws SQLException {
-        int id = resultSet.getInt("ID");
-        String customerName = resultSet.getString("CustomerName");
+        int reservationId = resultSet.getInt("ReservationID");
         int tableId = resultSet.getInt("TableID");
         int employeeId = resultSet.getInt("EmployeeID");
+        String customerName = resultSet.getString("CustomerName");
         String status = resultSet.getString("Status");
-
-        // Assuming you have methods to get Table and Employee objects by their IDs
+        int numberOfCustomers = resultSet.getInt("NumberOfCustomers");
         RestaurantTable table = getTableById(tableId);
         Employee employee = getEmployeeById(employeeId);
 
-        return new Reservation(id, customerName, table, employee, status);
+        return new Reservation(reservationId, customerName, table, employee, status, numberOfCustomers);
     }
 
-    // Assuming you have methods to get Table and Employee objects by their IDs
     private RestaurantTable getTableById(int tableId) {
         try (Connection connection = DatabaseConnection.getConnection()) {
             String sql = "SELECT * FROM RestaurantTable WHERE ID = ?";
@@ -98,7 +106,7 @@ public class ReservationDAO {
                         int branchId = resultSet.getInt("BranchID");
                         int tableTypeId = resultSet.getInt("TableTypeID");
     
-                        // Assuming you have methods to get Branch and TableType objects by their IDs
+                        
                         Branch branch = getBranchById(branchId);
                         TableType tableType = getTableTypeById(tableTypeId);
     
@@ -109,65 +117,67 @@ public class ReservationDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null; // Handle appropriately if the record is not found or an error occurs
+        return null; 
     }
     private Employee getEmployeeById(int employeeId) {
+        Employee employee = null;
         try (Connection connection = DatabaseConnection.getConnection()) {
-            String sql = "SELECT * FROM Employee WHERE ID = ?";
+            String sql = "SELECT Name, BranchID FROM Employee WHERE EmployeeID = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.setInt(1, employeeId);
-    
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
-                        int branchId = resultSet.getInt("RestaurantID");
-    
-                        // Assuming you have a method to get Branch by its ID
+                        String name = resultSet.getString("Name");
+                        int branchId = resultSet.getInt("BranchID");
                         Branch branch = getBranchById(branchId);
-    
-                        return new Employee(employeeId, resultSet.getString("Name"), branch);
+                        employee = new Employee(employeeId, name, branch);
                     }
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null; // Handle appropriately if the record is not found or an error occurs
+        return employee;
     }
 
     private Branch getBranchById(int branchId) {
+        Branch branch = null;
         try (Connection connection = DatabaseConnection.getConnection()) {
-            String sql = "SELECT * FROM Branch WHERE ID = ?";
+            String sql = "SELECT Name, Location FROM Branch WHERE BranchID = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.setInt(1, branchId);
-    
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
-                        return new Branch(branchId, resultSet.getString("Name"), resultSet.getString("Location"));
+                        String name = resultSet.getString("Name");
+                        String location = resultSet.getString("Location");
+                        branch = new Branch(branchId, name, location);
                     }
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null; // Handle appropriately if the record is not found or an error occurs
+        return branch;
     }
     
     private TableType getTableTypeById(int tableTypeId) {
+        TableType tableType = null;
         try (Connection connection = DatabaseConnection.getConnection()) {
-            String sql = "SELECT * FROM TableType WHERE ID = ?";
+            String sql = "SELECT Type, MaxCapacity FROM TableType WHERE TableTypeID = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.setInt(1, tableTypeId);
-    
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
-                        return new TableType(tableTypeId, resultSet.getString("Type"), resultSet.getInt("MaxCapacity"));
+                        String type = resultSet.getString("Type");
+                        int maxCapacity = resultSet.getInt("MaxCapacity");
+                        tableType = new TableType(tableTypeId, type, maxCapacity);
                     }
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null; // Handle appropriately if the record is not found or an error occurs
+        return tableType;
     }
 
     public List<Reservation> getReservationsByCustomerName(String customerName) {

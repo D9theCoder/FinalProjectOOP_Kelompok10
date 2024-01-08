@@ -1,15 +1,18 @@
 package main;
+
 import java.util.List;
 import java.util.Scanner;
-
 import DataAccessObject.*;
 import model.*;
 
 public class Main {
-
     private static Scanner scanner = new Scanner(System.in);
     private static ReservationDAO reservationDAO = new ReservationDAO();
     private static TransactionDAO transactionDAO = new TransactionDAO();
+    private static BranchDAO branchDAO = new BranchDAO();
+    private static TableTypeDAO tableTypeDAO = new TableTypeDAO();
+    private static EmployeeDAO employeeDAO = new EmployeeDAO();
+    private static MenuDAO menuDAO = new MenuDAO();
 
     public static void main(String[] args) {
         displayMenu();
@@ -24,10 +27,11 @@ public class Main {
             System.out.println("3. Display All Reservations");
             System.out.println("4. Filter Reservations by Status");
             System.out.println("5. Filter Reservations by Customer Name");
-            System.out.println("6. Exit");
+            System.out.println("6. Register Employee and Assign to Random Branch");
+            System.out.println("7. Exit");
 
             int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume the newline character
+            scanner.nextLine();
 
             switch (choice) {
                 case 1:
@@ -46,6 +50,9 @@ public class Main {
                     filterReservationsByCustomerName();
                     break;
                 case 6:
+                    registerAndAssignEmployee();
+                    break;
+                case 7:
                     System.out.println("Exiting the program. Goodbye!");
                     System.exit(0);
                 default:
@@ -55,42 +62,54 @@ public class Main {
     }
 
     private static void makeReservation() {
-        // Input details and create Reservation instance
-        System.out.println("Enter reservation ID:");
-        int reservationId = scanner.nextInt();
-        scanner.nextLine(); // Consume the newline character
-
         System.out.println("Enter customer name:");
         String customerName = scanner.nextLine();
 
-        // Assuming you have instances of Branch, TableType, and Employee
-        Branch bandungBranch = new Branch(1, "Bandung Restaurant", "Bandung Location");
-        TableType familyTableType = new TableType(1, "Family", 10);
-        RestaurantTable familyTable = new RestaurantTable(1, bandungBranch, familyTableType);
+        System.out.println("Available branches:");
+        List<Branch> branches = branchDAO.getAllBranches();
+        for (Branch branch : branches) {
+            System.out.println(branch.getId() + ". " + branch.getName());
+        }
+        System.out.println("Enter branch ID:");
+        int branchId = scanner.nextInt();
+        scanner.nextLine();
 
-        Employee bandungEmployee = new Employee(1, "Bob", bandungBranch);
+        System.out.println("Available table types:");
+        List<TableType> tableTypes = tableTypeDAO.getAllTableTypes();
+        for (TableType tableType : tableTypes) {
+            System.out.println(tableType.getId() + ". " + tableType.getType());
+        }
+        System.out.println("Enter table type ID:");
+        int tableTypeId = scanner.nextInt();
+        scanner.nextLine();
 
-        Reservation reservation = new Reservation(reservationId, customerName, familyTable, bandungEmployee, "In Reserve");
+        System.out.println("Enter number of customers:");
+        int numberOfCustomers = scanner.nextInt();
+        scanner.nextLine();
 
-        // Create menu instance
+        Branch selectedBranch = branchDAO.getBranchById(branchId);
+        TableType selectedTableType = tableTypeDAO.getTableTypeById(tableTypeId);
+        RestaurantTable selectedTable = new RestaurantTable(0, selectedBranch, selectedTableType);
+
+        Employee selectedEmployee = employeeDAO.getEmployeeById(1);
+
+        Reservation reservation = new Reservation(0, customerName, selectedTable, selectedEmployee, "In Reserve",
+                numberOfCustomers);
+
+        // Display available menu items
+        System.out.println("Available menu items:");
+        List<Menu> menuItems = menuDAO.getAllMenuItems();
+        for (Menu menuItem : menuItems) {
+            System.out.println(menuItem.getId() + ". " + menuItem.getMenuName());
+        }
         System.out.println("Enter menu ID:");
         int menuId = scanner.nextInt();
-        scanner.nextLine(); // Consume the newline character
-        System.out.println("Enter menu name:");
-        String menuName = scanner.nextLine();
-        System.out.println("Enter menu type:");
-        String menuType = scanner.nextLine();
-        System.out.println("Enter menu price:");
-        double menuPrice = scanner.nextDouble();
-        scanner.nextLine(); // Consume the newline character
-        System.out.println("Enter menu description:");
-        String menuDescription = scanner.nextLine();
+        scanner.nextLine();
 
-        Menu specialMenu = new Menu(menuId, menuName, menuType, menuPrice, menuDescription);
+        Menu selectedMenu = menuDAO.getMenuById(menuId);
 
-        // Perform operations using user input
         reservationDAO.createReservation(reservation);
-        transactionDAO.createTransaction(new Transaction(1, reservation, specialMenu));
+        transactionDAO.createTransaction(new Transaction(0, reservation, selectedMenu));
 
         System.out.println("Reservation created successfully!");
     }
@@ -98,7 +117,7 @@ public class Main {
     private static void updateReservationStatus() {
         System.out.println("Enter reservation ID:");
         int reservationId = scanner.nextInt();
-        scanner.nextLine(); // Consume the newline character
+        scanner.nextLine();
 
         System.out.println("Enter new status (e.g., 'In Order'):");
         String newStatus = scanner.nextLine();
@@ -133,6 +152,35 @@ public class Main {
         for (Reservation r : reservations) {
             System.out.println(r.getId() + " - " + r.getCustomerName() + " - " + r.getStatus());
         }
+    }
+
+    private static void registerAndAssignEmployee() {
+        System.out.println("Enter employee name:");
+        String employeeName = scanner.nextLine();
+
+        Employee employee = new Employee(0, employeeName, null);
+
+        // Display available branches (placeholder)
+        System.out.println("Available branches:");
+        System.out.println("1. Bandung ");
+        System.out.println("2. Jakarta ");
+        System.out.println("3. Bali ");
+        System.out.println("4. Surabaya ");
+        System.out.println("5. Samarinda ");
+        System.out.println("6. Padang ");
+
+        System.out.println("Enter branch ID to assign the employee:");
+        int branchId = scanner.nextInt();
+        scanner.nextLine(); // Consume the newline character
+
+        // Assign the selected branch to the employee
+        Branch selectedBranch = new Branch(branchId, "Branch Name", "Branch Location");
+        employee.setRestaurantBranch(selectedBranch);
+
+        // Insert the employee into the database
+        employeeDAO.insertEmployee(employee);
+
+        System.out.println("Employee registered and assigned successfully!");
     }
 }
 

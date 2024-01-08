@@ -8,14 +8,12 @@ public class Transaction {
     private Reservation reservation;
     private Menu menu;
 
-    // Constructors
     public Transaction(int id, Reservation reservation, Menu menu) {
         this.id = id;
         this.reservation = reservation;
         this.menu = menu;
     }
 
-    // Getter methods
     public int getId() {
         return id;
     }
@@ -28,7 +26,6 @@ public class Transaction {
         return menu;
     }
 
-    // Setter methods
     public void setId(int id) {
         this.id = id;
     }
@@ -41,7 +38,6 @@ public class Transaction {
         this.menu = menu;
     }
 
-    // Transaction methods
     public void createTransaction(Transaction transaction) {
         try (Connection connection = DatabaseConnection.getConnection()) {
             String sql = "INSERT INTO Transaction (ReservationID, MenuID) VALUES (?, ?)";
