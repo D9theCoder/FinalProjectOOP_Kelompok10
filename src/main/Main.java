@@ -17,6 +17,7 @@ public class Main {
 
     private static void displayMenu() {
         while (true) {
+            System.out.println("Welcome to LaperAh!");
             System.out.println("\nChoose an option:");
             System.out.println("1. Make Reservation");
             System.out.println("2. Update Reservation Status");
