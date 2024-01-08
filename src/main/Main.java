@@ -142,7 +142,7 @@ public class Main {
     }
 
     private static void filterReservationsByCustomerName() {
-        System.out.println("Enter a customer name to filter reservations (e.g., 'Bob'):");
+        System.out.println("Enter a customer name to filter reservations (misal: Putu):");
         String filterCustomerName = scanner.nextLine();
 
         List<Reservation> reservationsByCustomer = reservationDAO.getReservationsByCustomerName(filterCustomerName);
