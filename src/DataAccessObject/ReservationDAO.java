@@ -48,7 +48,7 @@ public class ReservationDAO {
     public Reservation getReservationById(int reservationId) {
         Reservation reservation = null;
         try (Connection connection = DatabaseConnection.getConnection()) {
-            String sql = "SELECT * FROM Reservation WHERE ID = ?";
+            String sql = "SELECT * FROM Reservation WHERE ReservationID = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.setInt(1, reservationId);
 
@@ -97,7 +97,7 @@ public class ReservationDAO {
 
     private RestaurantTable getTableById(int tableId) {
         try (Connection connection = DatabaseConnection.getConnection()) {
-            String sql = "SELECT * FROM RestaurantTable WHERE ID = ?";
+            String sql = "SELECT * FROM RestaurantTable WHERE TableID = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.setInt(1, tableId);
     
@@ -122,12 +122,12 @@ public class ReservationDAO {
     private Employee getEmployeeById(int employeeId) {
         Employee employee = null;
         try (Connection connection = DatabaseConnection.getConnection()) {
-            String sql = "SELECT Name, BranchID FROM Employee WHERE EmployeeID = ?";
+            String sql = "SELECT EmployeeName, BranchID FROM Employee WHERE EmployeeID = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.setInt(1, employeeId);
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
-                        String name = resultSet.getString("Name");
+                        String name = resultSet.getString("EmployeeName");
                         int branchId = resultSet.getInt("BranchID");
                         Branch branch = getBranchById(branchId);
                         employee = new Employee(employeeId, name, branch);
@@ -143,14 +143,13 @@ public class ReservationDAO {
     private Branch getBranchById(int branchId) {
         Branch branch = null;
         try (Connection connection = DatabaseConnection.getConnection()) {
-            String sql = "SELECT Name, Location FROM Branch WHERE BranchID = ?";
+            String sql = "SELECT Location FROM Branch WHERE BranchID = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.setInt(1, branchId);
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
-                        String name = resultSet.getString("Name");
                         String location = resultSet.getString("Location");
-                        branch = new Branch(branchId, name, location);
+                        branch = new Branch(branchId,location);
                     }
                 }
             }

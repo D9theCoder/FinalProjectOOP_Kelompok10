@@ -27,7 +27,7 @@ public class Main {
             System.out.println("3. Display All Reservations");
             System.out.println("4. Filter Reservations by Status");
             System.out.println("5. Filter Reservations by Customer Name");
-            System.out.println("6. Register Employee and Assign to Random Branch");
+            System.out.println("6. Register Employee");
             System.out.println("7. Exit");
 
             int choice = scanner.nextInt();
@@ -68,7 +68,7 @@ public class Main {
         System.out.println("Available branches:");
         List<Branch> branches = branchDAO.getAllBranches();
         for (Branch branch : branches) {
-            System.out.println(branch.getId() + ". " + branch.getName());
+            System.out.println(branch.getId() + ". " + branch.getLocation());
         }
         System.out.println("Enter branch ID:");
         int branchId = scanner.nextInt();
@@ -174,7 +174,7 @@ public class Main {
         scanner.nextLine(); // Consume the newline character
 
         // Assign the selected branch to the employee
-        Branch selectedBranch = new Branch(branchId, "Branch Name", "Branch Location");
+        Branch selectedBranch = new Branch(branchId, "Branch Location");
         employee.setRestaurantBranch(selectedBranch);
 
         // Insert the employee into the database
@@ -183,4 +183,6 @@ public class Main {
         System.out.println("Employee registered and assigned successfully!");
     }
 }
+
+
 

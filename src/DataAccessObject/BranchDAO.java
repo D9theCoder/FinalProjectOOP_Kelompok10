@@ -18,7 +18,7 @@ public class BranchDAO {
                         String name = resultSet.getString("Location");
                         String location = resultSet.getString("Location");
 
-                        Branch branch = new Branch(id, name, location);
+                        Branch branch = new Branch(id, location);
                         branches.add(branch);
                     }
                 }
@@ -44,7 +44,7 @@ public class BranchDAO {
                         String name = resultSet.getString("Name");
                         String location = resultSet.getString("Location");
 
-                        branch = new Branch(id, name, location);
+                        branch = new Branch(id, location);
                     }
                 }
             }
