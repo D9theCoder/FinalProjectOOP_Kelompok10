@@ -8,9 +8,10 @@ public class ReservationDAO {
     public void createReservation(Reservation reservation) {
         try (Connection connection = DatabaseConnection.getConnection()) {
             String sql = "INSERT INTO Reservation (TableID, EmployeeID, CustomerName, Status, NumberOfCustomers) VALUES (?, ?, ?, ?, ?)";
-            try (PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-                preparedStatement.setInt(1, reservation.getTable().getId());
-                preparedStatement.setInt(2, reservation.getEmployee().getId());
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql,
+                    Statement.RETURN_GENERATED_KEYS)) {
+                preparedStatement.setInt(1, reservation.getTableId());
+                preparedStatement.setInt(2, reservation.getEmployeeId());
                 preparedStatement.setString(3, reservation.getCustomerName());
                 preparedStatement.setString(4, "In Reserve"); // Initial status
                 preparedStatement.setInt(5, reservation.getNumberOfCustomers());
@@ -29,7 +30,6 @@ public class ReservationDAO {
             e.printStackTrace();
         }
     }
-
 
     public void updateReservationStatus(int reservationId, String newStatus) {
         try (Connection connection = DatabaseConnection.getConnection()) {
@@ -84,15 +84,14 @@ public class ReservationDAO {
 
     private Reservation mapResultSetToReservation(ResultSet resultSet) throws SQLException {
         int reservationId = resultSet.getInt("ReservationID");
-        int tableId = resultSet.getInt("TableID");
-        int employeeId = resultSet.getInt("EmployeeID");
+        int tableId = resultSet.getInt("TableID"); 
+        int employeeId = resultSet.getInt("EmployeeID"); 
         String customerName = resultSet.getString("CustomerName");
         String status = resultSet.getString("Status");
         int numberOfCustomers = resultSet.getInt("NumberOfCustomers");
-        RestaurantTable table = getTableById(tableId);
-        Employee employee = getEmployeeById(employeeId);
 
-        return new Reservation(reservationId, customerName, table, employee, status, numberOfCustomers);
+        return new Reservation(reservationId, tableId, employeeId, customerName, status, numberOfCustomers);
+
     }
 
     private RestaurantTable getTableById(int tableId) {
@@ -100,16 +99,15 @@ public class ReservationDAO {
             String sql = "SELECT * FROM RestaurantTable WHERE TableID = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                 preparedStatement.setInt(1, tableId);
-    
+
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
                         int branchId = resultSet.getInt("BranchID");
                         int tableTypeId = resultSet.getInt("TableTypeID");
-    
-                        
+
                         Branch branch = getBranchById(branchId);
                         TableType tableType = getTableTypeById(tableTypeId);
-    
+
                         return new RestaurantTable(tableId, branch, tableType);
                     }
                 }
@@ -117,8 +115,9 @@ public class ReservationDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null; 
+        return null;
     }
+
     private Employee getEmployeeById(int employeeId) {
         Employee employee = null;
         try (Connection connection = DatabaseConnection.getConnection()) {
@@ -149,7 +148,7 @@ public class ReservationDAO {
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
                         String location = resultSet.getString("Location");
-                        branch = new Branch(branchId,location);
+                        branch = new Branch(branchId, location);
                     }
                 }
             }
@@ -158,7 +157,7 @@ public class ReservationDAO {
         }
         return branch;
     }
-    
+
     private TableType getTableTypeById(int tableTypeId) {
         TableType tableType = null;
         try (Connection connection = DatabaseConnection.getConnection()) {
@@ -198,7 +197,7 @@ public class ReservationDAO {
         }
         return reservations;
     }
-    
+
     public List<Reservation> getReservationsByStatus(String status) {
         List<Reservation> reservations = new ArrayList<>();
         try (Connection connection = DatabaseConnection.getConnection()) {

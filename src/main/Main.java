@@ -35,7 +35,7 @@ public class Main {
 
             switch (choice) {
                 case 1:
-                    makeReservation();
+                    // makeReservation();
                     break;
                 case 2:
                     updateReservationStatus();
@@ -61,58 +61,60 @@ public class Main {
         }
     }
 
-    private static void makeReservation() {
-        System.out.println("Enter customer name:");
-        String customerName = scanner.nextLine();
+    // private static void makeReservation() {
+    // System.out.println("Enter customer name:");
+    // String customerName = scanner.nextLine();
 
-        System.out.println("Available branches:");
-        List<Branch> branches = branchDAO.getAllBranches();
-        for (Branch branch : branches) {
-            System.out.println(branch.getId() + ". " + branch.getLocation());
-        }
-        System.out.println("Enter branch ID:");
-        int branchId = scanner.nextInt();
-        scanner.nextLine();
+    // System.out.println("Available branches:");
+    // List<Branch> branches = branchDAO.getAllBranches();
+    // for (Branch branch : branches) {
+    // System.out.println(branch.getId() + ". " + branch.getLocation());
+    // }
+    // System.out.println("Enter branch ID:");
+    // int branchId = scanner.nextInt();
+    // scanner.nextLine();
 
-        System.out.println("Available table types:");
-        List<TableType> tableTypes = tableTypeDAO.getAllTableTypes();
-        for (TableType tableType : tableTypes) {
-            System.out.println(tableType.getId() + ". " + tableType.getType());
-        }
-        System.out.println("Enter table type ID:");
-        int tableTypeId = scanner.nextInt();
-        scanner.nextLine();
+    // System.out.println("Available table types:");
+    // List<TableType> tableTypes = tableTypeDAO.getAllTableTypes();
+    // for (TableType tableType : tableTypes) {
+    // System.out.println(tableType.getId() + ". " + tableType.getType());
+    // }
+    // System.out.println("Enter table type ID:");
+    // int tableTypeId = scanner.nextInt();
+    // scanner.nextLine();
 
-        System.out.println("Enter number of customers:");
-        int numberOfCustomers = scanner.nextInt();
-        scanner.nextLine();
+    // System.out.println("Enter number of customers:");
+    // int numberOfCustomers = scanner.nextInt();
+    // scanner.nextLine();
 
-        Branch selectedBranch = branchDAO.getBranchById(branchId);
-        TableType selectedTableType = tableTypeDAO.getTableTypeById(tableTypeId);
-        RestaurantTable selectedTable = new RestaurantTable(0, selectedBranch, selectedTableType);
+    // Branch selectedBranch = branchDAO.getBranchById(branchId);
+    // TableType selectedTableType = tableTypeDAO.getTableTypeById(tableTypeId);
+    // RestaurantTable selectedTable = new RestaurantTable(0, selectedBranch,
+    // selectedTableType);
 
-        Employee selectedEmployee = employeeDAO.getEmployeeById(1);
+    // Employee selectedEmployee = employeeDAO.getEmployeeById(1);
 
-        Reservation reservation = new Reservation(0, customerName, selectedTable, selectedEmployee, "In Reserve",
-                numberOfCustomers);
+    // Reservation reservation = new Reservation(0, selectedTable, selectedEmployee,
+    // customerName, "In Reserve", numberOfCustomers);
 
-        // Display available menu items
-        System.out.println("Available menu items:");
-        List<Menu> menuItems = menuDAO.getAllMenuItems();
-        for (Menu menuItem : menuItems) {
-            System.out.println(menuItem.getId() + ". " + menuItem.getMenuName());
-        }
-        System.out.println("Enter menu ID:");
-        int menuId = scanner.nextInt();
-        scanner.nextLine();
+    // // Display available menu items
+    // System.out.println("Available menu items:");
+    // List<Menu> menuItems = menuDAO.getAllMenuItems();
+    // for (Menu menuItem : menuItems) {
+    // System.out.println(menuItem.getId() + ". " + menuItem.getMenuName());
+    // }
+    // System.out.println("Enter menu ID:");
+    // int menuId = scanner.nextInt();
+    // scanner.nextLine();
 
-        Menu selectedMenu = menuDAO.getMenuById(menuId);
+    // Menu selectedMenu = menuDAO.getMenuById(menuId);
 
-        reservationDAO.createReservation(reservation);
-        transactionDAO.createTransaction(new Transaction(0, reservation, selectedMenu));
+    // reservationDAO.createReservation(reservation);
+    // transactionDAO.createTransaction(new Transaction(0, reservation,
+    // selectedMenu));
 
-        System.out.println("Reservation created successfully!");
-    }
+    // System.out.println("Reservation created successfully!");
+    // }
 
     private static void updateReservationStatus() {
         System.out.println("Enter reservation ID:");
@@ -147,10 +149,17 @@ public class Main {
         displayReservations(reservationsByCustomer);
     }
 
+    /**
+     * Display Reservations
+     * 
+     * This method displays the reservations with their details.
+     * 
+     * @param reservations The list of reservations to be displayed
+     */
     private static void displayReservations(List<Reservation> reservations) {
-        System.out.println("\nReservations:");
+        System.out.printf("%-15s %-15s %-15s %-20s %-15s %-20s\n", "ReservationID", "TableID", "EmployeeID", "Customer Name", "Status", "Number of Customers");
         for (Reservation r : reservations) {
-            System.out.println(r.getId() + " - " + r.getCustomerName() + " - " + r.getStatus());
+            System.out.printf("%-15d %-15d %-15d %-20s %-15s %-20d\n", r.getId(), r.getTableId(), r.getEmployeeId(), r.getCustomerName(), r.getStatus(), r.getNumberOfCustomers());
         }
     }
 
@@ -183,6 +192,3 @@ public class Main {
         System.out.println("Employee registered and assigned successfully!");
     }
 }
-
-
-
